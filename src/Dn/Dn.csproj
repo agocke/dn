@@ -4,6 +4,21 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
+
+  <Import Project="DepsVersions.props" />
+
+  <!-- Package dependencies for the build command-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="$(RoslynVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>build</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.7.2" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.7.2" />
+    <Reference Include="$(NuGetPackageRoot)microsoft.net.compilers.toolset/$(RoslynVersion)/tasks/netcore/Microsoft.Build.Tasks.CodeAnalysis.dll" />
+  </ItemGroup>
+
 
 </Project>
