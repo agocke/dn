@@ -7,17 +7,18 @@
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
-  <Import Project="DepsVersions.props" />
-
-  <!-- Package dependencies for the build command-->
+  <!-- Dependencies for Roslyn -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="$(RoslynVersion)">
-      <PrivateAssets>all</PrivateAssets>
-      <ExcludeAssets>build</ExcludeAssets>
-    </PackageReference>
+    <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+    <Reference Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/netcore/Microsoft.Build.Tasks.CodeAnalysis.dll" />
+    <Content Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/netcore/bincore/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <LinkBase>bincore</LinkBase>
+    </Content>
+
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.7.2" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.7.2" />
-    <Reference Include="$(NuGetPackageRoot)microsoft.net.compilers.toolset/$(RoslynVersion)/tasks/netcore/Microsoft.Build.Tasks.CodeAnalysis.dll" />
   </ItemGroup>
 
 

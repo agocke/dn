@@ -1,9 +1,11 @@
-﻿using Microsoft.Build.Utilities;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
+using Spectre.Console.Cli;
 
 namespace Dn;
 
-public static class BuildCommand
+public sealed class BuildCommand : Command<BuildArguments>
 {
     public abstract record Result
     {
@@ -21,14 +23,20 @@ public static class BuildCommand
         }
     }
 
-    public static Result Run(string[] args)
+    public static int Run(string[] args)
+    {
+        var app = new CommandApp<BuildCommand>();
+        return app.Run(args);
+    }
+
+    public override int Execute([NotNull] CommandContext context, [NotNull] BuildArguments settings)
     {
         // TODO: Implement full MSBuild property and Item parsing
-        var projectPath = args[0];
-        var parsedProject = MiniBuildParser.TryParse(projectPath);
+        var projectPath = settings.ProjectPath;
+        var parsedProject = MiniBuildParser.TryParse(projectPath!);
         if (parsedProject is null)
         {
-            return Result.Failure.Instance;
+            return 1;
         }
 
         // If there are no Compile items, assume we want to glob all *.cs files
@@ -40,9 +48,13 @@ public static class BuildCommand
         cscTask.Sources = csFiles.Select(p => new TaskItem(p)).ToArray();
         cscTask.UseSharedCompilation = true;
         cscTask.BuildEngine = new MockEngine(Console.Out);
+        if (settings.ArtifactsPath is {} artifactsPath)
+        {
+            cscTask.OutputAssembly = new TaskItem(Path.Combine(artifactsPath, "out.dll"));
+        }
         var exec = cscTask.Execute();
 
         Console.WriteLine(cscTask.Utf8Output);
-        return Result.Success.Instance;
+        return 0;
     }
 }

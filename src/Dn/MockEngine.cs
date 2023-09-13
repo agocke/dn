@@ -25,14 +25,14 @@ namespace Microsoft.CodeAnalysis.BuildTasks.UnitTests
 
         public void LogErrorEvent(BuildErrorEventArgs eventArgs)
         {
-            var msg = $"ERROR {eventArgs.Code}: {eventArgs.Message}";
+            var msg = $"MSBUILD ERROR {eventArgs.Code}: {eventArgs.Message}";
             _testOutputHelper?.WriteLine(msg);
             _log.AppendLine(msg);
         }
 
         public void LogWarningEvent(BuildWarningEventArgs eventArgs)
         {
-            var msg = $"WARNING {eventArgs.Code}: {eventArgs.Message}";
+            var msg = $"MSBUILD WARNING {eventArgs.Code}: {eventArgs.Message}";
             _testOutputHelper?.WriteLine(msg);
             _log.AppendLine(msg);
         }
