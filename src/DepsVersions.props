@@ -2,5 +2,6 @@
 <Project>
     <PropertyGroup>
         <_RoslynVersion>4.8.0-1.final</_RoslynVersion>
+        <_MicrosoftNetcoreappRefVersion>8.0.0-preview.7.23375.6</_MicrosoftNetcoreappRefVersion>
     </PropertyGroup>
 </Project>

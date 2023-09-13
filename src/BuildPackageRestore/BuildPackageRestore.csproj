@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageDownload Include="Microsoft.NetCore.App.Ref" Version="[8.0.0-preview.7.23375.6]" />
+        <PackageDownload Include="Microsoft.NetCore.App.Ref" Version="[$(_MicrosoftNetcoreappRefVersion)]" />
         <PackageDownload Include="Microsoft.Net.Compilers.Toolset" Version="[$(_RoslynVersion)]" />
     </ItemGroup>
 

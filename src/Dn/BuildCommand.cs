@@ -44,6 +44,10 @@ public sealed class BuildCommand : Command<BuildArguments>
         var csFiles = Directory.EnumerateFiles(projectFolder, "*.cs", SearchOption.AllDirectories);
         Console.WriteLine(string.Join(Environment.NewLine, csFiles));
 
+        // Add all ref assemblies from the Microsoft.NETCore.App.Ref package
+        var refPackDir = Path.Combine(AppContext.BaseDirectory, "microsoft.netcore.app.ref", "ref", "net8.0");
+        var refAssemblies = Directory.EnumerateFiles(refPackDir, "*.dll", SearchOption.TopDirectoryOnly);
+
         var cscTask = new Microsoft.CodeAnalysis.BuildTasks.Csc();
         cscTask.Sources = csFiles.Select(p => new TaskItem(p)).ToArray();
         cscTask.UseSharedCompilation = true;
@@ -52,6 +56,7 @@ public sealed class BuildCommand : Command<BuildArguments>
         {
             cscTask.OutputAssembly = new TaskItem(Path.Combine(artifactsPath, "out.dll"));
         }
+        cscTask.References = refAssemblies.Select(p => new TaskItem(p)).ToArray();
         var exec = cscTask.Execute();
 
         Console.WriteLine(cscTask.Utf8Output);
