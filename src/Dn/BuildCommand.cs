@@ -1,11 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing.Text;
+using Internal.CommandLine;
 using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
-using Spectre.Console.Cli;
 
 namespace Dn;
 
-public sealed class BuildCommand : Command<BuildArguments>
+public sealed class BuildCommand
 {
     public abstract record Result
     {
@@ -25,11 +27,38 @@ public sealed class BuildCommand : Command<BuildArguments>
 
     public static int Run(string[] args)
     {
-        var app = new CommandApp<BuildCommand>();
-        return app.Run(args);
+        BuildArguments? buildArgs = null;
+
+        var argSyntax = ArgumentSyntax.Parse(args, syntax =>
+        {
+            string? commandName = null;
+
+            var build = syntax.DefineCommand("build", ref commandName, "Install a new SDK");
+            if (build.IsActive)
+            {
+                string? projectPath = null;
+                string? artifactsPath = null;
+
+                syntax.DefineOption("artifacts-path", ref artifactsPath, "Path to artifacts output");
+                syntax.DefineParameter("project-path", ref projectPath!, "Path to project");
+
+                buildArgs = new BuildArguments
+                {
+                    ArtifactsPath = artifactsPath,
+                    ProjectPath = projectPath
+                };
+            }
+        });
+
+        if (buildArgs is null)
+        {
+            throw new InvalidOperationException("Expected command or exception");
+        }
+
+        return Execute(buildArgs);
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] BuildArguments settings)
+    public static int Execute(BuildArguments settings)
     {
         // TODO: Implement full MSBuild property and Item parsing
         var projectPath = settings.ProjectPath;
@@ -54,6 +83,7 @@ public sealed class BuildCommand : Command<BuildArguments>
         cscTask.BuildEngine = new MockEngine(Console.Out);
         if (settings.ArtifactsPath is {} artifactsPath)
         {
+            Console.WriteLine(artifactsPath);
             cscTask.OutputAssembly = new TaskItem(Path.Combine(artifactsPath, "out.dll"));
         }
         cscTask.References = refAssemblies.Select(p => new TaskItem(p)).ToArray();
