@@ -3,6 +3,6 @@
   <Import Project="../Directory.Build.props" />
   <Import Project="DepsVersions.props" />
   <PropertyGroup>
-    <_RoslynRestoreDirectory>$(MSBuildThisFileDirectory)BuildPackageRestore/packages/</_RoslynRestoreDirectory>
+    <_RoslynRestoreDirectory>$(MSBuildThisFileDirectory)../artifacts/restore/</_RoslynRestoreDirectory>
   </PropertyGroup>
 </Project>

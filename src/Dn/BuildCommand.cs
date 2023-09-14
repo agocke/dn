@@ -4,6 +4,7 @@ using System.Drawing.Text;
 using Internal.CommandLine;
 using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
+using Microsoft.CodeAnalysis.BuildTasks;
 
 namespace Dn;
 
@@ -58,16 +59,30 @@ public sealed class BuildCommand
         return Execute(buildArgs);
     }
 
+    internal class CscWrap : Csc
+    {
+        protected override string PathToManagedTool => Path.Combine(AppContext.BaseDirectory, "bincore/csc.dll");
+    }
+
     public static int Execute(BuildArguments settings)
     {
         // TODO: Implement full MSBuild property and Item parsing
-        var projectPath = settings.ProjectPath;
-        var parsedProject = MiniBuildParser.TryParse(projectPath!);
+        var projectPath = settings.ProjectPath!;
+        var parsedProject = MiniBuildParser.TryParse(projectPath);
         if (parsedProject is null)
         {
             return 1;
         }
 
+        var cscTask = BuildCscArgs(projectPath, settings.ArtifactsPath);
+        var exec = cscTask.Execute();
+
+        Console.WriteLine(cscTask.Utf8Output);
+        return 0;
+    }
+
+    private static CscWrap BuildCscArgs(string projectPath, string? artifactsPath)
+    {
         // If there are no Compile items, assume we want to glob all *.cs files
         var projectFolder = Path.GetFullPath(Path.GetDirectoryName(projectPath)!);
         var csFiles = Directory.EnumerateFiles(projectFolder, "*.cs", SearchOption.AllDirectories);
@@ -77,19 +92,16 @@ public sealed class BuildCommand
         var refPackDir = Path.Combine(AppContext.BaseDirectory, "microsoft.netcore.app.ref", "ref", "net8.0");
         var refAssemblies = Directory.EnumerateFiles(refPackDir, "*.dll", SearchOption.TopDirectoryOnly);
 
-        var cscTask = new Microsoft.CodeAnalysis.BuildTasks.Csc();
+        var cscTask = new CscWrap();
         cscTask.Sources = csFiles.Select(p => new TaskItem(p)).ToArray();
         cscTask.UseSharedCompilation = true;
         cscTask.BuildEngine = new MockEngine(Console.Out);
-        if (settings.ArtifactsPath is {} artifactsPath)
+        if (artifactsPath is not null)
         {
             Console.WriteLine(artifactsPath);
             cscTask.OutputAssembly = new TaskItem(Path.Combine(artifactsPath, "out.dll"));
         }
         cscTask.References = refAssemblies.Select(p => new TaskItem(p)).ToArray();
-        var exec = cscTask.Execute();
-
-        Console.WriteLine(cscTask.Utf8Output);
-        return 0;
+        return cscTask;
     }
 }

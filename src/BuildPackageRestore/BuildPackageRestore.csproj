@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.Build.NoTargets/1.0.80"> <!-- This is not a project we want to build. -->
 
     <PropertyGroup>
-        <RestorePackagesPath>packages/</RestorePackagesPath> <!-- Changes the global packages folder-->
+        <RestorePackagesPath>../../artifacts/restore/</RestorePackagesPath> <!-- Changes the global packages folder-->
         <MSBuildProjectExtensionsPath>$(RestorePackagesPath)obj/</MSBuildProjectExtensionsPath> <!-- It's still PackageReference, so project intermediates are still created. -->
         <TargetFramework>net8.0</TargetFramework> <!-- This is not super relevant, as long as your SDK version supports it. -->
         <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder> <!-- If a package is resolved to a fallback folder, it may not be downloaded.-->
