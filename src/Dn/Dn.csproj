@@ -11,6 +11,7 @@
   <ItemGroup>
     <!-- <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" /> -->
+    <PackageReference Include="Serde" Version="0.5.2" />
     <Reference Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/Microsoft.Build.Tasks.CodeAnalysis.dll" />
     <Content Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/netcore/bincore/**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
