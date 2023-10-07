@@ -10,3 +10,8 @@ drop-in replacement for those projects. For more complex projects that are curre
 using Tasks and Targets, the recommendation is to wrap `dn` in one of the many
 pre-existing build systems available in the ecosystem, like `Make`, `CMake`, `Bazel`,
 `Buck`, or `Meson`.
+
+## Contributing
+
+To build the repo you must have `make` installed. To build, run `make` in the top-level
+directory.
