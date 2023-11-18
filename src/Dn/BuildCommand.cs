@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing.Text;
 using Internal.CommandLine;
+using MiniBuild;
 using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
 using Microsoft.CodeAnalysis.BuildTasks;
@@ -75,7 +76,7 @@ public sealed class BuildCommand
             projectPath = Directory.EnumerateFiles(env.WorkingDirectory, "*.csproj", SearchOption.TopDirectoryOnly).Single();
         }
 
-        var parsedProject = MiniBuildParser.TryParse(projectPath);
+        var parsedProject = ProjectParser.TryParse(projectPath);
         if (parsedProject is null)
         {
             return 1;
