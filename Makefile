@@ -11,3 +11,6 @@ $(TASK_DIR)/$(TASK_NAME): $(TASK_DIR)/netcore/$(TASK_NAME)
 
 $(TASK_DIR)/netcore/$(TASK_NAME):
 	dotnet restore src/BuildPackageRestore/BuildPackageRestore.csproj
+
+test: build
+	dotnet test dn.sln
