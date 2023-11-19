@@ -28,8 +28,6 @@ public class ParseProjectTests
                 ])
             ]
         );
-        var pNodes = parsed.Nodes;
-        var eNodes = expected.Nodes;
         Assert.Equal(expected, parsed);
     }
 }
