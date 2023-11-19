@@ -6,6 +6,7 @@ using MiniBuild;
 using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
 using Microsoft.CodeAnalysis.BuildTasks;
+using StaticCs.Collections;
 
 namespace Dn;
 
@@ -81,28 +82,45 @@ public sealed class BuildCommand
         {
             return 1;
         }
+        var ctx = new ProjectContext(parsedProject);
+        var resolvedProject = ctx.Resolve();
 
         var projectName = Path.GetFileNameWithoutExtension(projectPath);
         var objDir = Path.Combine(Path.GetDirectoryName(projectPath)!, "obj", "Debug", "net8.0");
         Directory.CreateDirectory(objDir);
 
-        var cscTask = BuildCscArgs(projectPath, objDir, projectName, settings.ArtifactsPath, env.Out);
+        var csFiles = GetCompileItemsOrDefault(resolvedProject, Path.GetDirectoryName(projectPath)!);
+        var cscTask = BuildCscArgs(csFiles, projectPath, objDir, projectName, settings.ArtifactsPath, env.Out);
         _ = cscTask.Execute();
 
-        const string tfm = "net8.0";
-        const string version = "8.0.0-preview.7.23375.6";
         var runtimeConfigPath = Path.Combine(objDir, $"{projectName}.runtimeconfig.json");
-        GenerateRuntimeConfigurationFiles.Run(tfm, version, runtimeConfigPath);
+        GenerateRuntimeConfigurationFiles.Run(VersionInfo.Tfm, VersionInfo.SdkVersion, runtimeConfigPath);
 
         env.Out.WriteLine(cscTask.Utf8Output);
         return 0;
     }
 
-    private static CscWrap BuildCscArgs(string projectPath, string objDir, string projectName, string? artifactsPath, TextWriter output)
+    private static EqArray<string> GetCompileItemsOrDefault(ResolvedProject resolved, string projectFolder)
+    {
+        if (resolved.Items.TryGetValue("Compile", out var compileItems) && compileItems.Any())
+        {
+            return compileItems.Select(i => i.Value).ToEq();
+        }
+        // If there are no Compile items, assume we want to glob all *.cs files
+        var csFiles = Directory.EnumerateFiles(projectFolder, "*.cs", SearchOption.AllDirectories);
+        return csFiles.ToEq();
+    }
+
+    private static CscWrap BuildCscArgs(
+        EqArray<string> csFiles,
+        string projectPath,
+        string objDir,
+        string projectName,
+        string? artifactsPath,
+        TextWriter output)
     {
         // If there are no Compile items, assume we want to glob all *.cs files
         var projectFolder = Path.GetFullPath(Path.GetDirectoryName(projectPath)!);
-        var csFiles = Directory.EnumerateFiles(projectFolder, "*.cs", SearchOption.AllDirectories);
         output.WriteLine(string.Join(Environment.NewLine, csFiles));
 
         // Add all ref assemblies from the Microsoft.NETCore.App.Ref package
