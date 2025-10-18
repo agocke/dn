@@ -17,8 +17,8 @@
       <LinkBase>bincore</LinkBase>
     </Content>
 
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.7.2" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.7.2" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
     <!-- Ref assemblies from refpack -->
     <Content Include="$(_RoslynRestoreDirectory)microsoft.netcore.app.ref/$(_MicrosoftNetcoreappRefVersion)/**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

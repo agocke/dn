@@ -1,6 +1,6 @@
 
 using System.Text;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Dn.Test;
 
@@ -17,6 +17,6 @@ public sealed class TestWriter : TextWriter
 
     public override void WriteLine(string? value)
     {
-        _outputHelper.WriteLine(value);
+        _outputHelper.WriteLine(value ?? "null");
     }
 }

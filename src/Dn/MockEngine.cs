@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.CodeAnalysis.BuildTasks.UnitTests
+namespace Microsoft.CodeAnalysis.BuildTasks
 {
     internal sealed class MockEngine : IBuildEngine
     {

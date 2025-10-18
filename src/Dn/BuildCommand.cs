@@ -4,7 +4,6 @@ using System.Drawing.Text;
 using Internal.CommandLine;
 using MiniBuild;
 using Microsoft.Build.Utilities;
-using Microsoft.CodeAnalysis.BuildTasks.UnitTests;
 using Microsoft.CodeAnalysis.BuildTasks;
 using StaticCs.Collections;
 
