@@ -13,4 +13,4 @@ $(TASK_DIR)/netcore/$(TASK_NAME):
 	dotnet restore src/BuildPackageRestore/BuildPackageRestore.csproj
 
 test: build
-	dotnet test dn.sln
+	dotnet test --solution dn.sln

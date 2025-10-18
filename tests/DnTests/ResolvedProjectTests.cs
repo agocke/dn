@@ -1,5 +1,5 @@
-using Xunit;
 using static MiniBuild.ProjectSubNode;
+using Xunit;
 
 namespace MiniBuild.Tests;
 
