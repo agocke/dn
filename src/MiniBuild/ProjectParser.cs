@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Xml;
+using StaticCs;
 using StaticCs.Collections;
 
 namespace MiniBuild;
@@ -10,6 +11,7 @@ public sealed record ParsedProject(
     string Sdk,
     EqArray<ProjectSubNode> Nodes);
 
+[Closed]
 public abstract record ProjectSubNode
 {
     private ProjectSubNode() { }
@@ -19,11 +21,13 @@ public abstract record ProjectSubNode
 
 public sealed record ParsedProperty(string Name, string Value);
 
-public sealed record ParsedItem(string Name, string Include)
-{
-    public string? Exclude { get; init; } = null;
-    public string? Condition { get; init; } = null;
-}
+public sealed record ParsedItem(
+    string Name,
+    string Include,
+    string? Exclude = null,
+    string? Condition = null,
+    string? Version = null,
+    Dictionary<string, string>? Metadata = null);
 
 /// <summary>
 /// An XML parser for MSBuild project files. Will never support Tasks or Targets.
@@ -76,10 +80,25 @@ public static class ProjectParser
                     var includeNode = itemElement.GetAttributeNode("Include");
                     var excludeNode = itemElement.GetAttributeNode("Exclude");
                     var conditionNode = itemElement.GetAttributeNode("Condition");
+                    var versionNode = itemElement.GetAttributeNode("Version");
+
+                    // Capture child elements as metadata (e.g., <Version>1.0.0</Version>)
+                    Dictionary<string, string>? metadata = null;
+                    foreach (var itemChild in itemElement.ChildNodes)
+                    {
+                        if (itemChild is XmlElement childElement)
+                        {
+                            metadata ??= new Dictionary<string, string>();
+                            metadata[childElement.Name] = childElement.InnerText;
+                        }
+                    }
+
                     parsedItems.Add(new ParsedItem(name, includeNode?.Value ?? "")
                     {
                         Exclude = excludeNode?.Value,
                         Condition = conditionNode?.Value,
+                        Version = versionNode?.Value,
+                        Metadata = metadata,
                     });
                 }
                 nodes.Add(new ProjectSubNode.ItemGroup(parsedItems.ToImmutable().ToEq()));
