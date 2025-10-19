@@ -19,9 +19,10 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
 
     <!-- NuGet restore dependencies -->
-    <PackageReference Include="NuGet.Commands" Version="6.14.0" />
-    <PackageReference Include="NuGet.ProjectModel" Version="6.14.0" />
-    <PackageReference Include="NuGet.Configuration" Version="6.14.0" />
+    <ProjectReference Include="../../external/nuget.client/src/NuGet.Core/NuGet.Commands/NuGet.Commands.csproj" />
+    <ProjectReference Include="../../external/nuget.client/src/NuGet.Core/NuGet.Protocol/NuGet.Protocol.csproj" />
+    <ProjectReference Include="../../external/nuget.client/src/NuGet.Core/NuGet.ProjectModel/NuGet.ProjectModel.csproj" />
+    <ProjectReference Include="../../external/nuget.client/src/NuGet.Core/NuGet.Configuration/NuGet.Configuration.csproj" />
 
     <!-- Ref assemblies from refpack -->
     <Content Include="$(_RoslynRestoreDirectory)microsoft.netcore.app.ref/$(_MicrosoftNetcoreappRefVersion)/**">
