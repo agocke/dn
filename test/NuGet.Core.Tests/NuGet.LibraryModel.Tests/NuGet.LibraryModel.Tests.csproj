@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
+    <Description>Unit tests for NuGet.LibraryModel.</Description>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
+  </ItemGroup>
+</Project>

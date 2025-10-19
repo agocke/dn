@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
+    <Description>Unit tests for NuGet.Frameworks.</Description>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+  </ItemGroup>
+</Project>
