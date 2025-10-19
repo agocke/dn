@@ -110,7 +110,7 @@ namespace NuGet.Configuration
             IsMachineWide = isMachineWide;
             IsReadOnly = IsMachineWide || isReadOnly;
 
-            if (NuGetEventSource.IsEnabled) TraceEvents.FileReadStart(ConfigFilePath, isMachineWide, isReadOnly);
+            //if (NuGetEventSource.IsEnabled) TraceEvents.FileReadStart(ConfigFilePath, isMachineWide, isReadOnly);
 
             try
             {
@@ -130,7 +130,7 @@ namespace NuGet.Configuration
             }
             finally
             {
-                if (NuGetEventSource.IsEnabled) TraceEvents.FileReadStop(ConfigFilePath, isMachineWide, isReadOnly);
+                //if (NuGetEventSource.IsEnabled) TraceEvents.FileReadStop(ConfigFilePath, isMachineWide, isReadOnly);
             }
         }
 
@@ -250,6 +250,7 @@ namespace NuGet.Configuration
         {
             private const string EventNameFileRead = "SettingsFile/FileRead";
 
+            [RequiresUnreferencedCode("Uses EventSource which is not compatible with trimming.")]
             public static void FileReadStart(string configFilePath, bool isMachineWide, bool isReadOnly)
             {
                 var eventOptions = new EventSourceOptions
@@ -262,6 +263,7 @@ namespace NuGet.Configuration
                 NuGetEventSource.Instance.Write(EventNameFileRead, eventOptions, new FileReadEventData(configFilePath, isMachineWide, isReadOnly));
             }
 
+            [RequiresUnreferencedCode("Uses EventSource which is not compatible with trimming.")]
             public static void FileReadStop(string configFilePath, bool isMachineWide, bool isReadOnly)
             {
                 var eventOptions = new EventSourceOptions

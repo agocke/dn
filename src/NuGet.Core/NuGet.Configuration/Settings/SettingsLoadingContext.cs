@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.IO;
 using NuGet.Common;
@@ -75,7 +76,7 @@ namespace NuGet.Configuration
                     // Fire the FileRead event so unit tests can detect when a file was actually read versus cached
                     FileRead?.Invoke(this, fileInfo.FullName);
 
-                    if (NuGetEventSource.IsEnabled) TraceEvents.FileRead(fileInfo.FullName, isMachineWide, isReadOnly);
+                    //if (NuGetEventSource.IsEnabled) TraceEvents.FileRead(fileInfo.FullName, isMachineWide, isReadOnly);
 
                     return settingsFile;
                 }));
@@ -87,6 +88,7 @@ namespace NuGet.Configuration
         {
             private const string EventNameFileRead = "SettingsLoadingContext/FileRead";
 
+            [RequiresUnreferencedCode("Uses EventSource which is not compatible with trimming.")]
             public static void FileRead(string filePath, bool isMachineWide, bool isReadOnly)
             {
                 var eventOptions = new EventSourceOptions
