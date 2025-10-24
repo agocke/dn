@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Versioning;
@@ -269,6 +271,8 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="InvalidOperationException">Thrown if not connected.</exception>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(
             MessageMethod method,
             TOutbound payload,
@@ -290,6 +294,31 @@ namespace NuGet.Protocol.Plugins
             cancellationToken.ThrowIfCancellationRequested();
 
             return MessageDispatcher.DispatchRequestAsync<TOutbound, TInbound>(method, payload, cancellationToken);
+        }
+
+        public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(
+            MessageMethod method,
+            JsonTypeInfo<TInbound> inboundJti,
+            TOutbound payload,
+            JsonTypeInfo<TOutbound> outboundJti,
+            CancellationToken cancellationToken)
+            where TOutbound : class
+            where TInbound : class
+        {
+            if (State == ConnectionState.Closing ||
+                State == ConnectionState.Closed)
+            {
+                return TaskResult.Null<TInbound>();
+            }
+
+            if (_state < (int)ConnectionState.Connecting)
+            {
+                throw new InvalidOperationException(Strings.Plugin_NotConnected);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return MessageDispatcher.DispatchRequestAsync<TOutbound, TInbound>(method, inboundJti, payload, outboundJti, cancellationToken);
         }
 
         private void OnMessageReceived(object sender, MessageEventArgs e)

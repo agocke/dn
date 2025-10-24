@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -369,13 +370,17 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<MonitorNuGetProcessExitRequest, MonitorNuGetProcessExitResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.MonitorNuGetProcessExit),
+                        It.IsNotNull<JsonTypeInfo<MonitorNuGetProcessExitResponse>>(),
                         It.IsNotNull<MonitorNuGetProcessExitRequest>(),
+                        It.IsNotNull<JsonTypeInfo<MonitorNuGetProcessExitRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new MonitorNuGetProcessExitResponse(MessageResponseCode.Success));
 
                 _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<InitializeRequest, InitializeResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.Initialize),
+                        It.IsNotNull<JsonTypeInfo<InitializeResponse>>(),
                         It.IsNotNull<InitializeRequest>(),
+                        It.IsNotNull<JsonTypeInfo<InitializeRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new InitializeResponse(MessageResponseCode.Success));
 
@@ -383,8 +388,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 {
                     _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetOperationClaimsRequest, GetOperationClaimsResponse>(
                             It.Is<MessageMethod>(m => m == MessageMethod.GetOperationClaims),
+                            It.IsNotNull<JsonTypeInfo<GetOperationClaimsResponse>>(),
                             It.Is<GetOperationClaimsRequest>(
                                 g => g.PackageSourceRepository == expectation.SourceRepository.PackageSource.Source),
+                            It.IsNotNull<JsonTypeInfo<GetOperationClaimsRequest>>(),
                             It.IsAny<CancellationToken>()))
                         .ReturnsAsync(new GetOperationClaimsResponse(expectation.OperationClaims.ToArray()));
 
@@ -392,8 +399,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     {
                         _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                                 It.Is<MessageMethod>(m => m == MessageMethod.SetCredentials),
+                                It.IsNotNull<JsonTypeInfo<SetCredentialsResponse>>(),
                                 It.Is<SetCredentialsRequest>(
                                     g => g.PackageSourceRepository == expectation.SourceRepository.PackageSource.Source),
+                                It.IsNotNull<JsonTypeInfo<SetCredentialsRequest>>(),
                                 It.IsAny<CancellationToken>()))
                             .ReturnsAsync(new SetCredentialsResponse(MessageResponseCode.Success));
                     }
@@ -445,8 +454,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 {
                     _connection.Verify(x => x.SendRequestAndReceiveResponseAsync<GetOperationClaimsRequest, GetOperationClaimsResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetOperationClaims),
+                        It.IsNotNull<JsonTypeInfo<GetOperationClaimsResponse>>(),
                         It.Is<GetOperationClaimsRequest>(
                             g => g.PackageSourceRepository == expectation.SourceRepository.PackageSource.Source),
+                        It.IsNotNull<JsonTypeInfo<GetOperationClaimsRequest>>(),
                         It.IsAny<CancellationToken>()), Times.Once());
 
                     var expectedSetCredentialsRequestCalls = expectation.OperationClaims.Any()
@@ -454,8 +465,10 @@ namespace NuGet.Protocol.Plugins.Tests
 
                     _connection.Verify(x => x.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.SetCredentials),
+                        It.IsNotNull<JsonTypeInfo<SetCredentialsResponse>>(),
                         It.Is<SetCredentialsRequest>(
                             g => g.PackageSourceRepository == expectation.SourceRepository.PackageSource.Source),
+                        It.IsNotNull<JsonTypeInfo<SetCredentialsRequest>>(),
                         It.IsAny<CancellationToken>()), expectedSetCredentialsRequestCalls);
                 }
 

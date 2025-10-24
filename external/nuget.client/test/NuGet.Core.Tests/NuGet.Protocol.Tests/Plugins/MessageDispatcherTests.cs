@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -1171,6 +1172,13 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 MessageReceived?.Invoke(this, new MessageEventArgs(response));
             }
+
+            public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(MessageMethod method, JsonTypeInfo<TInbound> inboundJti, TOutbound payload, JsonTypeInfo<TOutbound> outboundJti, CancellationToken cancellationToken)
+                where TOutbound : class
+                where TInbound : class
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private sealed class ConnectionEventRegistrationSpy : IConnection
@@ -1222,6 +1230,13 @@ namespace NuGet.Protocol.Plugins.Tests
             }
 
             public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(MessageMethod method, TOutbound payload, CancellationToken cancellationToken)
+                where TOutbound : class
+                where TInbound : class
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(MessageMethod method, JsonTypeInfo<TInbound> inboundJti, TOutbound payload, JsonTypeInfo<TOutbound> outboundJti, CancellationToken cancellationToken)
                 where TOutbound : class
                 where TInbound : class
             {

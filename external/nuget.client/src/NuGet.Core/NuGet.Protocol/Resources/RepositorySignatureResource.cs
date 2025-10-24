@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Plugins;
 
 namespace NuGet.Protocol
 {
@@ -28,7 +29,7 @@ namespace NuGet.Protocol
                 throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.SigningCertificates, source.PackageSource.Source));
 
             AllRepositorySigned = allRepositorySigned;
-            RepositoryCertificateInfos = data.OfType<JObject>().Select(p => p.FromJToken<RepositoryCertificateInfo>());
+            RepositoryCertificateInfos = data.OfType<JObject>().Select(p => p.FromJToken(PluginJsonContext.Default.RepositoryCertificateInfo));
 
             foreach (var repositoryCertificateInfo in RepositoryCertificateInfos)
             {

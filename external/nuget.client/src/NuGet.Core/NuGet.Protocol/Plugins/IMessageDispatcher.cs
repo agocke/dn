@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,6 +42,8 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">The message method.</param>
         /// <param name="payload">The message payload.</param>
         /// <returns>A message.</returns>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         Message CreateMessage<TPayload>(MessageType type, MessageMethod method, TPayload payload)
             where TPayload : class;
 
@@ -80,9 +84,20 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <typeparamref name="TInbound" />
         /// from the target.</returns>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         Task<TInbound> DispatchRequestAsync<TOutbound, TInbound>(
             MessageMethod method,
             TOutbound payload,
+            CancellationToken cancellationToken)
+            where TOutbound : class
+            where TInbound : class;
+
+        Task<TInbound> DispatchRequestAsync<TOutbound, TInbound>(
+            MessageMethod method,
+            JsonTypeInfo<TInbound> inboundJti,
+            TOutbound payload,
+            JsonTypeInfo<TOutbound> outboundJti,
             CancellationToken cancellationToken)
             where TOutbound : class
             where TInbound : class;
@@ -95,6 +110,8 @@ namespace NuGet.Protocol.Plugins
         /// <param name="responsePayload">The response payload.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         Task DispatchResponseAsync<TOutbound>(Message request, TOutbound responsePayload, CancellationToken cancellationToken)
             where TOutbound : class;
 
