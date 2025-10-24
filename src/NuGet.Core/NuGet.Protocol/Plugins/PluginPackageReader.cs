@@ -268,7 +268,7 @@ namespace NuGet.Protocol.Plugins
                 return Enumerable.Empty<string>();
             }
 
-            // Normalized destination path 
+            // Normalized destination path
             var normalizedDestination = NormalizeDirectoryPath(destination);
 
             ValidatePackageEntries(normalizedDestination, packageFiles, _packageIdentity);
@@ -283,7 +283,9 @@ namespace NuGet.Protocol.Plugins
                 destination);
             var response = await _plugin.Connection.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                 MessageMethod.CopyFilesInPackage,
+                PluginJsonContext.Default.CopyFilesInPackageResponse,
                 request,
+                PluginJsonContext.Default.CopyFilesInPackageRequest,
                 cancellationToken);
 
             if (response != null)
@@ -931,7 +933,9 @@ namespace NuGet.Protocol.Plugins
                 nupkgFilePath);
             var response = await _plugin.Connection.SendRequestAndReceiveResponseAsync<CopyNupkgFileRequest, CopyNupkgFileResponse>(
                 MessageMethod.CopyNupkgFile,
+                PluginJsonContext.Default.CopyNupkgFileResponse,
                 request,
+                PluginJsonContext.Default.CopyNupkgFileRequest,
                 cancellationToken);
 
             if (response != null)
@@ -1030,7 +1034,9 @@ namespace NuGet.Protocol.Plugins
 
             var response = await _plugin.Connection.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                 MessageMethod.CopyFilesInPackage,
+                PluginJsonContext.Default.CopyFilesInPackageResponse,
                 payload,
+                PluginJsonContext.Default.CopyFilesInPackageRequest,
                 CancellationToken.None);
 
             if (response != null)
@@ -1069,7 +1075,9 @@ namespace NuGet.Protocol.Plugins
             var request = new GetFilesInPackageRequest(_packageSourceRepository, packageId, packageVersion);
             var response = await _plugin.Connection.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                 MessageMethod.GetFilesInPackage,
+                PluginJsonContext.Default.GetFilesInPackageResponse,
                 request,
+                PluginJsonContext.Default.GetFilesInPackageRequest,
                 cancellationToken);
 
             if (response != null)

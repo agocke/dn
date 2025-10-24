@@ -1,7 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using NuGet.Protocol.Converters;
 using NuGet.Versioning;
+using StjJsonPropertyNameAttribute = System.Text.Json.Serialization.JsonPropertyNameAttribute;
+using StjJsonConverterAttribute = System.Text.Json.Serialization.JsonConverterAttribute;
+using StjJsonIgnoreAttribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 namespace NuGet.Protocol.Core.Types
 {
@@ -29,8 +33,11 @@ namespace NuGet.Protocol.Core.Types
             DownloadCount = downloadCount;
         }
 
+        [StjJsonPropertyName("version")]
+        [StjJsonConverter(typeof(NuGetVersionStjConverter))]
         public NuGetVersion Version { get; private set; }
 
+        [StjJsonPropertyName("downloads")]
         public long? DownloadCount { get; private set; }
 
         /// <summary>
@@ -39,6 +46,7 @@ namespace NuGet.Protocol.Core.Types
         /// here. For V3, the metadata property is null. Callers that receive this type need to be able to
         /// fetch this package metadata some other way if this property is null.
         /// </summary>
+        [StjJsonIgnore]
         public IPackageSearchMetadata PackageSearchMetadata { get; set; }
     }
 }

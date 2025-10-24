@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -123,9 +124,11 @@ namespace NuGet.Protocol.Plugins.Tests
 
             connection.Setup(x => x.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                     It.Is<MessageMethod>(m => m == MessageMethod.SetCredentials),
+                    It.IsNotNull<JsonTypeInfo<SetCredentialsResponse>>(),
                     It.Is<SetCredentialsRequest>(s => s.PackageSourceRepository == _packageSource.Source
                         && s.ProxyUsername == null && s.ProxyPassword == null
                         && s.Username == null && s.Password == null),
+                    It.IsNotNull<JsonTypeInfo<SetCredentialsRequest>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SetCredentialsResponse(MessageResponseCode.Success));
 
@@ -190,11 +193,13 @@ namespace NuGet.Protocol.Plugins.Tests
 
             connection.Setup(x => x.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                     It.Is<MessageMethod>(m => m == MessageMethod.SetCredentials),
+                    It.IsNotNull<JsonTypeInfo<SetCredentialsResponse>>(),
                     It.Is<SetCredentialsRequest>(s => s.PackageSourceRepository == _packageSource.Source
                         && s.ProxyUsername == proxyCredentials.UserName
                         && s.ProxyPassword == proxyCredentials.Password
                         && s.Username == packageSourceCredentials.UserName
                         && s.Password == packageSourceCredentials.Password),
+                    It.IsNotNull<JsonTypeInfo<SetCredentialsRequest>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SetCredentialsResponse(MessageResponseCode.Success));
 

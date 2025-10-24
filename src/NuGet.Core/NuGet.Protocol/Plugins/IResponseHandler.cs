@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +25,26 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="payload" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         Task SendResponseAsync<TPayload>(Message request, TPayload payload, CancellationToken cancellationToken)
+            where TPayload : class;
+
+        /// <summary>
+        /// Asynchronously handles responding to a request.
+        /// </summary>
+        /// <typeparam name="TPayload">The response payload type.</typeparam>
+        /// <param name="request">The request message.</param>
+        /// <param name="payload">The response payload.</param>
+        /// <param name="payloadTypeInfo">The JSON type info for AOT-compatible serialization.</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="payload" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="payloadTypeInfo" /> is <see langword="null" />.</exception>
+        /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
+        /// is cancelled.</exception>
+        Task SendResponseAsync<TPayload>(Message request, TPayload payload, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TPayload> payloadTypeInfo, CancellationToken cancellationToken)
             where TPayload : class;
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -16,30 +17,46 @@ namespace NuGet.Protocol
     {
         public const int JsonSerializationMaxDepth = 512;
 
-        public static readonly JsonSerializerSettings ObjectSerializationSettings = new JsonSerializerSettings
-        {
-            MaxDepth = JsonSerializationMaxDepth,
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Converters = new List<JsonConverter>
-            {
-                new NuGetVersionConverter(),
-                new VersionInfoConverter(),
-                new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() },
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal },
-                new FingerprintsConverter(),
-                new VersionRangeConverter(),
-                new PackageVulnerabilityInfoConverter(),
-                new NuGetFrameworkConverter()
-            },
-        };
+        public static readonly JsonSerializerSettings ObjectSerializationSettings;
+        internal static readonly JsonSerializer JsonObjectSerializer;
 
-        internal static readonly JsonSerializer JsonObjectSerializer = JsonSerializer.Create(ObjectSerializationSettings);
+        [UnconditionalSuppressMessage(
+            "Trimming",
+            "IL2026",
+            Justification = "<Pending>")]
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL3050",
+            Justification = "<Pending>")]
+        static JsonExtensions()
+        {
+            ObjectSerializationSettings = new JsonSerializerSettings
+            {
+                MaxDepth = JsonSerializationMaxDepth,
+                NullValueHandling = NullValueHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.None,
+                Converters = new List<JsonConverter>
+                {
+                    new NuGetVersionConverter(),
+                    new VersionInfoConverter(),
+                    new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() },
+                    new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal },
+                    new FingerprintsConverter(),
+                    new VersionRangeConverter(),
+                    new PackageVulnerabilityInfoConverter(),
+                    new NuGetFrameworkConverter()
+                },
+            };
+
+            JsonObjectSerializer = JsonSerializer.Create(ObjectSerializationSettings);
+        }
 
         /// <summary>
         /// Serialize object to the JSON.
         /// </summary>
         /// <param name="obj">The object.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static string ToJson(this object obj, Formatting formatting = Formatting.None)
         {
             return JsonConvert.SerializeObject(obj, formatting, JsonExtensions.ObjectSerializationSettings);
@@ -50,6 +67,8 @@ namespace NuGet.Protocol
         /// </summary>
         /// <typeparam name="T">Type of object</typeparam>
         /// <param name="json">JSON representation of object</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static T FromJson<T>(this string json)
         {
             return JsonConvert.DeserializeObject<T>(json, JsonExtensions.ObjectSerializationSettings);
@@ -61,6 +80,8 @@ namespace NuGet.Protocol
         /// <typeparam name="T">Type of object</typeparam>
         /// <param name="json">JSON representation of object</param>
         /// <param name="settings">The settings.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static T FromJson<T>(this string json, JsonSerializerSettings settings)
         {
             return JsonConvert.DeserializeObject<T>(json, settings);
@@ -71,6 +92,8 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="json">JSON representation of object</param>
         /// <param name="type">The object type.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static object FromJson(this string json, Type type)
         {
             return JsonConvert.DeserializeObject(json, type, JsonExtensions.ObjectSerializationSettings);
@@ -80,6 +103,8 @@ namespace NuGet.Protocol
         /// Serialize object to JToken.
         /// </summary>
         /// <param name="obj">The object.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static JToken ToJToken(this object obj)
         {
             return JToken.FromObject(obj, JsonExtensions.JsonObjectSerializer);
@@ -90,9 +115,24 @@ namespace NuGet.Protocol
         /// </summary>
         /// <typeparam name="T">Type of object.</typeparam>
         /// <param name="jtoken">The JToken to be deserialized.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static T FromJToken<T>(this JToken jtoken)
         {
             return jtoken.ToObject<T>(JsonExtensions.JsonObjectSerializer);
+        }
+
+        /// <summary>
+        /// Deserialize object directly from JToken using AOT-compatible serialization.
+        /// </summary>
+        /// <typeparam name="T">Type of object.</typeparam>
+        /// <param name="jtoken">The JToken to be deserialized.</param>
+        /// <param name="jsonTypeInfo">The JSON type info for AOT-compatible deserialization.</param>
+        public static T FromJToken<T>(this JToken jtoken, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T> jsonTypeInfo)
+        {
+            // Convert JToken to string, then deserialize using System.Text.Json
+            var jsonString = jtoken.ToString(Formatting.None);
+            return System.Text.Json.JsonSerializer.Deserialize(jsonString, jsonTypeInfo);
         }
 
         /// <summary>
@@ -100,6 +140,8 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="jtoken">The JToken to be deserialized.</param>
         /// <param name="type">The object type.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static object FromJToken(this JToken jtoken, Type type)
         {
             return jtoken.ToObject(type, JsonExtensions.JsonObjectSerializer);
@@ -111,6 +153,8 @@ namespace NuGet.Protocol
         /// <typeparam name="T">Type of property to return.</typeparam>
         /// <param name="jobject">The JObject to be deserialized.</param>
         /// <param name="propertyName">The property name.</param>
+        [RequiresUnreferencedCode("Requires reflection-based serialization")]
+        [RequiresDynamicCode("Requires reflection-based serialization")]
         public static T GetJObjectProperty<T>(this JObject jobject, string propertyName)
         {
             var targetProperty = jobject.GetValue(propertyName: propertyName, comparison: StringComparison.OrdinalIgnoreCase);

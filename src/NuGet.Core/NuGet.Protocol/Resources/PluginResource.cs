@@ -95,7 +95,9 @@ namespace NuGet.Protocol.Core.Types
 
             await plugin.Connection.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                 MessageMethod.SetCredentials,
+                PluginJsonContext.Default.SetCredentialsResponse,
                 payload,
+                PluginJsonContext.Default.SetCredentialsRequest,
                 cancellationToken);
         }
 

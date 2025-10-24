@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -249,6 +250,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 responseHandler.Setup(x => x.SendResponseAsync(
                         It.IsNotNull<Message>(),
                         It.IsNotNull<HandshakeResponse>(),
+                        It.IsNotNull<JsonTypeInfo<HandshakeResponse>>(),
                         It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(0));
 

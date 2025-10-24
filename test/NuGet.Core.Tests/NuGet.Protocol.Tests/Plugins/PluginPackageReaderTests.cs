@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -112,10 +113,12 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Single() == fileInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyFilesInPackageResponse(MessageResponseCode.NotFound, copiedFiles: null));
 
@@ -134,10 +137,12 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Single() == fileInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyFilesInPackageResponse(MessageResponseCode.Error, copiedFiles: null));
 
@@ -160,13 +165,15 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Single() == fileInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
-                    .Callback<MessageMethod, CopyFilesInPackageRequest, CancellationToken>(
-                        (method, request, cancellationToken) =>
+                    .Callback<MessageMethod, JsonTypeInfo<CopyFilesInPackageResponse>, CopyFilesInPackageRequest, JsonTypeInfo<CopyFilesInPackageRequest>, CancellationToken>(
+                        (method, _, request, _, cancellationToken) =>
                         {
                             var filePath = Path.Combine(request.DestinationFolderPath, request.FilesInPackage.Single());
 
@@ -213,9 +220,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.NotFound, files: null));
 
@@ -232,9 +241,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.Error, files: null));
 
@@ -254,9 +265,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.Success, expectedFiles));
 
@@ -275,9 +288,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.Success, expectedFiles));
 
@@ -286,7 +301,9 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Verify(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                     It.IsAny<MessageMethod>(),
+                    It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                     It.IsAny<GetFilesInPackageRequest>(),
+                    It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                     It.IsAny<CancellationToken>()), Times.Once);
             }
         }
@@ -334,9 +351,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.Success, filesInPackage));
 
@@ -440,10 +459,12 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Single() == fileInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyFilesInPackageResponse(MessageResponseCode.NotFound, copiedFiles: null));
 
@@ -467,10 +488,12 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Single() == fileInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyFilesInPackageResponse(MessageResponseCode.Error, copiedFiles: null));
 
@@ -498,13 +521,15 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Count() == expectedFiles.Length),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
-                    .Callback<MessageMethod, CopyFilesInPackageRequest, CancellationToken>(
-                        (method, request, cancellationToken) =>
+                    .Callback<MessageMethod, JsonTypeInfo<CopyFilesInPackageResponse>, CopyFilesInPackageRequest, JsonTypeInfo<CopyFilesInPackageRequest>, CancellationToken>(
+                        (method, _, request, _, cancellationToken) =>
                         {
                             var copiedFiles = new List<string>();
 
@@ -1237,9 +1262,11 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyNupkgFileRequest, CopyNupkgFileResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyNupkgFile),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileResponse>>(),
                         It.Is<CopyNupkgFileRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyNupkgFileResponse(MessageResponseCode.NotFound));
 
@@ -1267,9 +1294,11 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyNupkgFileRequest, CopyNupkgFileResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyNupkgFile),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileResponse>>(),
                         It.Is<CopyNupkgFileRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new CopyNupkgFileResponse(MessageResponseCode.Error));
 
@@ -1297,12 +1326,14 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyNupkgFileRequest, CopyNupkgFileResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyNupkgFile),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileResponse>>(),
                         It.Is<CopyNupkgFileRequest>(c => c.PackageSourceRepository == test.PackageSource.Source
                             && c.PackageId == test.PackageIdentity.Id
                             && c.PackageVersion == test.PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<CopyNupkgFileRequest>>(),
                         It.IsAny<CancellationToken>()))
-                    .Callback<MessageMethod, CopyNupkgFileRequest, CancellationToken>(
-                        (method, request, cancellationToken) =>
+                    .Callback<MessageMethod, JsonTypeInfo<CopyNupkgFileResponse>, CopyNupkgFileRequest, JsonTypeInfo<CopyNupkgFileRequest>, CancellationToken>(
+                        (method, _, request, _, cancellationToken) =>
                         {
                             File.WriteAllText(request.DestinationFilePath, string.Empty);
                         })
@@ -1430,9 +1461,11 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetFilesInPackageRequest, GetFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.GetFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageResponse>>(),
                         It.Is<GetFilesInPackageRequest>(c => c.PackageSourceRepository == PackageSource.Source
                             && c.PackageId == PackageIdentity.Id
                             && c.PackageVersion == PackageIdentity.Version.ToNormalizedString()),
+                        It.IsNotNull<JsonTypeInfo<GetFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetFilesInPackageResponse(MessageResponseCode.Success, filesInPackage.Select(f => f.Path)));
 
@@ -1440,13 +1473,15 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 Connection.Setup(x => x.SendRequestAndReceiveResponseAsync<CopyFilesInPackageRequest, CopyFilesInPackageResponse>(
                         It.Is<MessageMethod>(m => m == MessageMethod.CopyFilesInPackage),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageResponse>>(),
                         It.Is<CopyFilesInPackageRequest>(c => c.PackageSourceRepository == PackageSource.Source
                             && c.PackageId == PackageIdentity.Id
                             && c.PackageVersion == PackageIdentity.Version.ToNormalizedString()
                             && c.FilesInPackage.Count() == 1),
+                        It.IsNotNull<JsonTypeInfo<CopyFilesInPackageRequest>>(),
                         It.IsAny<CancellationToken>()))
-                    .Callback<MessageMethod, CopyFilesInPackageRequest, CancellationToken>(
-                        (method, request, cancellationToken) =>
+                    .Callback<MessageMethod, JsonTypeInfo<CopyFilesInPackageResponse>, CopyFilesInPackageRequest, JsonTypeInfo<CopyFilesInPackageRequest>, CancellationToken>(
+                        (method, _, request, _, cancellationToken) =>
                         {
                             var copiedFiles = new List<string>();
 
