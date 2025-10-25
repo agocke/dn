@@ -24,7 +24,7 @@ public class ParseProjectTests
             Nodes: [
                 new PropertyGroup([ new("TargetFramework", "net8.0")]),
                 new ItemGroup([
-                    new ParsedItem("PackageReference", "xunit")
+                    new ParsedItem("PackageReference", "xunit", Version: "2.4.2")
                 ])
             ]
         );
