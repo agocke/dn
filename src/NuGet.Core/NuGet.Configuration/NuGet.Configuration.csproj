@@ -10,7 +10,6 @@
     <XPLATProject>true</XPLATProject>
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
-    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PolySharp">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' " />
   </ItemGroup>
 
@@ -42,10 +37,12 @@
   <ItemGroup Label="NuGet Shared">
     <Compile Include="$(SharedDirectory)\EqualityUtility.cs" />
     <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
     <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
     <Compile Include="$(SharedDirectory)\NullableAttributes.cs" />
     <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
     <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+    <Compile Include="$(SharedDirectory)\RequiresUnreferencedCodeAttribute.cs" />
   </ItemGroup>
 
   <ItemGroup>
