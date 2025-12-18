@@ -4,16 +4,15 @@ namespace Dn.Test;
 
 public readonly record struct TempDirectory(string Path) : IDisposable
 {
-    public static TempDirectory TestRoot = CreateSubDirectory(ExecTests.ResolveRelativePath("../../artifacts/test/"));
+    private static readonly string TestRootPath = IOPath.GetFullPath(ExecTests.ResolveRelativePath("../../artifacts/test/"));
 
-    public static TempDirectory CreateSubDirectory(string basePath)
+    public static TempDirectory CreateSubDirectory()
     {
-        string dir = IOPath.Combine(basePath, IOPath.GetRandomFileName());
+        Directory.CreateDirectory(TestRootPath);
+        string dir = IOPath.Combine(TestRootPath, IOPath.GetRandomFileName());
         Directory.CreateDirectory(dir);
         return new TempDirectory(dir);
     }
-
-    public TempDirectory CreateSubDirectory() => CreateSubDirectory(Path);
 
     public void Dispose()
     {

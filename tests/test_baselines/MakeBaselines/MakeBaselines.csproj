@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.858" />
-    <PackageReference Include="Serde" Version="0.5.2" />
+    <PackageReference Include="MSBuild.StructuredLogger" Version="2.3.113" />
   </ItemGroup>
 
 </Project>
