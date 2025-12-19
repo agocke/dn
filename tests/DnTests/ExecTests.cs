@@ -7,7 +7,7 @@ namespace Dn.Test;
 
 public sealed class ExecTests : IDisposable
 {
-    private readonly TempDirectory _tempDir = TempDirectory.TestRoot.CreateSubDirectory();
+    private readonly TempDirectory _tempDir = TempDirectory.CreateSubDirectory();
     private readonly string _savedWorkingDirectory = Environment.CurrentDirectory;
     private readonly ITestOutputHelper _outputHelper;
 
