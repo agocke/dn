@@ -12,6 +12,6 @@ namespace NuGet.Protocol.Model
         public long TotalHits { get; set; }
 
         [JsonProperty("data")]
-        public List<PackageSearchMetadata> Data { get; private set; } = new List<PackageSearchMetadata>();
+        public List<PackageSearchMetadata> Data { get; init; } = new List<PackageSearchMetadata>();
     }
 }
