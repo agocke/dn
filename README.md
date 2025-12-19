@@ -1,15 +1,13 @@
 # dn
 
-A mini-sdk for .NET. This is called a mini SDK because it should include support for
-the official .NET SDK top-level verbs (build, restore, publish, etc), but will not
-contain an MSBild execution engine, meaning no support for Tasks or Targets.
+A re-implementation of the dotnet SDK optimized for performance.
 
-The result should be smaller, faster, and simpler than the official .NET SDK. Many
-projects may not need MSBuild functionality at all, and `dn` is intended to be a
-drop-in replacement for those projects. For more complex projects that are currently
-using Tasks and Targets, the recommendation is to wrap `dn` in one of the many
-pre-existing build systems available in the ecosystem, like `Make`, `CMake`, `Bazel`,
-`Buck`, or `Meson`.
+The goal is compatibility with the .NET SDK, except for two aspects:
+
+- MSBuild Tasks
+- MSBuild Targets
+
+These components require a fully-compatible MSBuild engine and are not compatible with the performance goals.
 
 ## Contributing
 
