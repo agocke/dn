@@ -35,10 +35,10 @@ namespace NuGet.Protocol.Core.Types
 
         [StjJsonPropertyName("version")]
         [StjJsonConverter(typeof(NuGetVersionStjConverter))]
-        public NuGetVersion Version { get; private set; }
+        public NuGetVersion Version { get; init; }
 
         [StjJsonPropertyName("downloads")]
-        public long? DownloadCount { get; private set; }
+        public long? DownloadCount { get; init; }
 
         /// <summary>
         /// In V2, when finding the list of versions that a package ID has, we also get all of the metadata

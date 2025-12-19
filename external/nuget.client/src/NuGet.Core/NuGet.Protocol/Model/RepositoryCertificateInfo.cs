@@ -15,26 +15,26 @@ namespace NuGet.Protocol
         [JsonProperty(PropertyName = JsonProperties.Fingerprints)]
         [StjJsonPropertyName("fingerprints")]
         [StjJsonConverter(typeof(FingerprintsStjConverter))]
-        public Fingerprints Fingerprints { get; private set; }
+        public Fingerprints Fingerprints { get; init; }
 
         [JsonProperty(PropertyName = JsonProperties.Subject)]
         [StjJsonPropertyName("subject")]
-        public string Subject { get; private set; }
+        public string Subject { get; init; }
 
         [JsonProperty(PropertyName = JsonProperties.Issuer)]
         [StjJsonPropertyName("issuer")]
-        public string Issuer { get; private set; }
+        public string Issuer { get; init; }
 
         [JsonProperty(PropertyName = JsonProperties.NotBefore)]
         [StjJsonPropertyName("notBefore")]
-        public DateTimeOffset NotBefore { get; private set; }
+        public DateTimeOffset NotBefore { get; init; }
 
         [JsonProperty(PropertyName = JsonProperties.NotAfter)]
         [StjJsonPropertyName("notAfter")]
-        public DateTimeOffset NotAfter { get; private set; }
+        public DateTimeOffset NotAfter { get; init; }
 
         [JsonProperty(PropertyName = JsonProperties.ContentUrl)]
         [StjJsonPropertyName("contentUrl")]
-        public string ContentUrl { get; private set; }
+        public string ContentUrl { get; init; }
     }
 }
