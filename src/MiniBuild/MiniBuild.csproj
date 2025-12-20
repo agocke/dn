@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StaticCS" Version="0.3.1">
+    <PackageReference Include="StaticCS">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="StaticCs.Collections" Version="1.1.0" />
+    <PackageReference Include="StaticCs.Collections" />
   </ItemGroup>
 
 </Project>
