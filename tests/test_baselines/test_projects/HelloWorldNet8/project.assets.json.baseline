@@ -13,8 +13,8 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/andy/code/dn/tests/test_baselines/test_projects/HelloWorld/HelloWorld.csproj",
-      "projectName": "HelloWorld",
+      "projectUniqueName": "/Users/andy/code/dn/tests/test_baselines/test_projects/HelloWorldNet8/HelloWorldNet8.csproj",
+      "projectName": "HelloWorldNet8",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/andy/.nuget/NuGet/NuGet.Config"
