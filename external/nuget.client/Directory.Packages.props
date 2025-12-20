@@ -19,7 +19,7 @@
   <!-- All .NET package dependencies have to use proper version property names -->
   <PropertyGroup>
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion Condition="'$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">10.0.1</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.2.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
