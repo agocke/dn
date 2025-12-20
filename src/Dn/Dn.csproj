@@ -15,8 +15,8 @@
       <LinkBase>bincore</LinkBase>
     </Content>
 
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
 
     <!-- NuGet restore dependencies -->
     <ProjectReference Include="../../external/nuget.client/src/NuGet.Core/NuGet.Commands/NuGet.Commands.csproj" />
