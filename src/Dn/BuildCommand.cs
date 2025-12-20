@@ -93,7 +93,7 @@ public sealed class BuildCommand
         _ = cscTask.Execute();
 
         var runtimeConfigPath = Path.Combine(objDir, $"{projectName}.runtimeconfig.json");
-        GenerateRuntimeConfigurationFiles.Run(VersionInfo.Tfm, VersionInfo.SdkVersion, runtimeConfigPath);
+        GenerateRuntimeConfigurationFiles.Run(VersionInfo.Net8Tfm, VersionInfo.RuntimeConfigNet8Version, runtimeConfigPath);
 
         env.Out.WriteLine(cscTask.Utf8Output);
         return 0;

@@ -3,6 +3,6 @@ namespace Dn;
 
 public static class VersionInfo
 {
-    public const string SdkVersion = "8.0.0-preview.7.23375.6";
-    public const string Tfm = "net8.0";
+    public const string RuntimeConfigNet8Version = "8.0.0";
+    public const string Net8Tfm = "net8.0";
 }
