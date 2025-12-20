@@ -2,6 +2,7 @@
   <!-- Enable centralized package management -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <_MicrosoftNetcoreappRefVersion>8.0.0-preview.7.23375.6</_MicrosoftNetcoreappRefVersion>
   </PropertyGroup>
 
   <!-- Package versions -->
@@ -12,5 +13,6 @@
     <PackageVersion Include="StaticCS" Version="0.3.1" />
     <PackageVersion Include="StaticCs.Collections" Version="1.1.0" />
     <PackageVersion Include="Mono.Cecil" Version="0.11.5" />
+    <PackageVersion Include="Microsoft.NetCore.App.Ref" Version="$(_MicrosoftNetcoreappRefVersion)" />
   </ItemGroup>
 </Project>
