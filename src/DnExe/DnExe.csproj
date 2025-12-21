@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Dn\Dn.csproj" />
@@ -10,6 +10,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+    <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="Newtonsoft.Json.Linq.JToken.DynamicIsSupported" Value="false" Trim="true" />
+    <RuntimeHostConfigurationOption Include="Newtonsoft.Json.Linq.JToken.SerializationIsSupported" Value="false" Trim="true" />
+  </ItemGroup>
+
 
 </Project>
