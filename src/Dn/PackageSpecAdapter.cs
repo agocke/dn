@@ -23,13 +23,21 @@ public static class PackageSpecAdapter
     public static PackageSpec CreatePackageSpec(
         string projectPath,
         ParsedProject parsedProject,
-        ResolvedProject resolvedProject)
+        ResolvedProject resolvedProject
+    )
     {
         var projectName = Path.GetFileNameWithoutExtension(projectPath);
-        var projectDir = Path.GetDirectoryName(projectPath) ?? throw new InvalidOperationException($"Could not determine directory for {projectPath}");
+        var projectDir =
+            Path.GetDirectoryName(projectPath)
+            ?? throw new InvalidOperationException(
+                $"Could not determine directory for {projectPath}"
+            );
 
         // Get target framework from properties
-        var targetFrameworkString = resolvedProject.ResolvedProperties.TryGetValue("TargetFramework", out var tfm)
+        var targetFrameworkString = resolvedProject.ResolvedProperties.TryGetValue(
+            "TargetFramework",
+            out var tfm
+        )
             ? tfm
             : "net8.0"; // Default fallback
 
@@ -43,11 +51,13 @@ public static class PackageSpecAdapter
         {
             FrameworkName = targetFramework,
             TargetAlias = targetFrameworkString,
-            Dependencies = packageReferences.ToImmutableArray()
+            Dependencies = packageReferences.ToImmutableArray(),
         };
 
         // Create PackageSpec
-        var packageSpec = new PackageSpec(new List<TargetFrameworkInformation> { targetFrameworkInfo })
+        var packageSpec = new PackageSpec(
+            new List<TargetFrameworkInformation> { targetFrameworkInfo }
+        )
         {
             Name = projectName,
             FilePath = projectPath,
@@ -63,24 +73,27 @@ public static class PackageSpecAdapter
                 {
                     new ProjectRestoreMetadataFrameworkInfo(targetFramework)
                     {
-                        TargetAlias = targetFrameworkString
-                    }
+                        TargetAlias = targetFrameworkString,
+                    },
                 },
                 // Use global packages folder
                 PackagesPath = GetGlobalPackagesFolder(),
                 // Default to nuget.org
                 Sources = new List<PackageSource>
                 {
-                    new PackageSource("https://api.nuget.org/v3/index.json", "nuget.org")
+                    new PackageSource("https://api.nuget.org/v3/index.json", "nuget.org"),
                 },
-                ConfigFilePaths = GetNuGetConfigPaths()
-            }
+                ConfigFilePaths = GetNuGetConfigPaths(),
+            },
         };
 
         return packageSpec;
     }
 
-    private static List<LibraryDependency> GetPackageReferences(ParsedProject parsedProject, ResolvedProject resolvedProject)
+    private static List<LibraryDependency> GetPackageReferences(
+        ParsedProject parsedProject,
+        ResolvedProject resolvedProject
+    )
     {
         var dependencies = new List<LibraryDependency>();
 
@@ -112,13 +125,16 @@ public static class PackageSpecAdapter
 
                         if (VersionRange.TryParse(versionString, out var versionRange))
                         {
-                            dependencies.Add(new LibraryDependency
-                            {
-                                LibraryRange = new LibraryRange(
-                                    packageId,
-                                    versionRange,
-                                    LibraryDependencyTarget.Package)
-                            });
+                            dependencies.Add(
+                                new LibraryDependency
+                                {
+                                    LibraryRange = new LibraryRange(
+                                        packageId,
+                                        versionRange,
+                                        LibraryDependencyTarget.Package
+                                    ),
+                                }
+                            );
                         }
                     }
                 }

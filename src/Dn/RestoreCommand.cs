@@ -4,68 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Internal.CommandLine;
 using MiniBuild;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.ProjectModel;
+using Serde.CmdLine;
+using Spectre.Console;
 
 namespace Dn;
 
 public sealed class RestoreCommand
 {
-    public sealed record RestoreArguments
-    {
-        public string? ProjectPath { get; init; }
-        public bool Force { get; init; }
-        public bool NoCache { get; init; }
-    }
-
-    public static int Run(string[] args)
-    {
-        RestoreArguments? restoreArgs = null;
-
-        var argSyntax = ArgumentSyntax.Parse(args, syntax =>
-        {
-            string? commandName = null;
-
-            var restore = syntax.DefineCommand("restore", ref commandName, "Restore project dependencies");
-            if (restore.IsActive)
-            {
-                string? projectPath = null;
-                bool force = false;
-                bool noCache = false;
-
-                syntax.DefineOption("force", ref force, "Force re-download of packages");
-                syntax.DefineOption("no-cache", ref noCache, "Disable HTTP cache");
-                syntax.DefineParameter("project-path", ref projectPath!, "Path to project");
-
-                restoreArgs = new RestoreArguments
-                {
-                    ProjectPath = projectPath,
-                    Force = force,
-                    NoCache = noCache
-                };
-            }
-        });
-
-        if (restoreArgs is null)
-        {
-            throw new InvalidOperationException("Expected restore command");
-        }
-
-        var env = new DnEnv(Environment.CurrentDirectory, Console.Out);
-
-        return ExecuteAsync(env, restoreArgs).GetAwaiter().GetResult();
-    }
-
-    public static async Task<int> ExecuteAsync(DnEnv env, RestoreArguments settings)
+    public static async Task<int> ExecuteAsync(DnEnv env, SubCommand.RestoreArgs settings)
     {
         // Find project file
         var projectPath = settings.ProjectPath;
         if (projectPath is null)
         {
-            var projects = Directory.EnumerateFiles(env.WorkingDirectory, "*.csproj", SearchOption.TopDirectoryOnly).ToList();
+            var projects = Directory
+                .EnumerateFiles(env.WorkingDirectory, "*.csproj", SearchOption.TopDirectoryOnly)
+                .ToList();
             if (projects.Count == 0)
             {
                 env.Out.WriteLine("Error: No .csproj file found in current directory");
@@ -73,7 +31,9 @@ public sealed class RestoreCommand
             }
             if (projects.Count > 1)
             {
-                env.Out.WriteLine("Error: Multiple .csproj files found. Please specify which one to restore.");
+                env.Out.WriteLine(
+                    "Error: Multiple .csproj files found. Please specify which one to restore."
+                );
                 return 1;
             }
             projectPath = projects[0];
@@ -99,7 +59,11 @@ public sealed class RestoreCommand
         var resolvedProject = ctx.Resolve();
 
         // Convert to PackageSpec
-        var packageSpec = PackageSpecAdapter.CreatePackageSpec(projectPath, parsedProject, resolvedProject);
+        var packageSpec = PackageSpecAdapter.CreatePackageSpec(
+            projectPath,
+            parsedProject,
+            resolvedProject
+        );
 
         // Create DependencyGraphSpec
         var dgSpec = new DependencyGraphSpec();
@@ -113,7 +77,7 @@ public sealed class RestoreCommand
         var providersCache = new RestoreCommandProvidersCache();
         var providers = new List<IPreLoadedRestoreRequestProvider>
         {
-            new DependencyGraphSpecRequestProvider(providersCache, dgSpec)
+            new DependencyGraphSpecRequestProvider(providersCache, dgSpec),
         };
 
         // Setup restore context
@@ -121,19 +85,21 @@ public sealed class RestoreCommand
         {
             CacheContext = new NuGet.Protocol.Core.Types.SourceCacheContext
             {
-                NoCache = settings.NoCache
+                NoCache = false,
             },
             DisableParallel = false,
             Log = logger,
-            AllowNoOp = !settings.Force,
             HideWarningsAndErrors = false,
-            PreLoadedRequestProviders = providers
+            PreLoadedRequestProviders = providers,
         };
 
         // Run restore
         try
         {
-            var restoreSummaries = await RestoreRunner.RunAsync(restoreContext, CancellationToken.None);
+            var restoreSummaries = await RestoreRunner.RunAsync(
+                restoreContext,
+                CancellationToken.None
+            );
 
             // Check results
             var allSucceeded = restoreSummaries.All(s => s.Success);
@@ -160,7 +126,7 @@ public sealed class RestoreCommand
         catch (Exception ex)
         {
             env.Out.WriteLine($"Error during restore: {ex.Message}");
-            env.Out.WriteLine(ex.StackTrace);
+            env.Out.WriteLine(ex.StackTrace ?? "");
             return 1;
         }
     }
@@ -168,18 +134,11 @@ public sealed class RestoreCommand
     /// <summary>
     /// Simple console logger for NuGet operations
     /// </summary>
-    private class ConsoleLogger : ILogger
+    private class ConsoleLogger(IAnsiConsole _console) : ILogger
     {
-        private readonly TextWriter _output;
-
-        public ConsoleLogger(TextWriter output)
-        {
-            _output = output;
-        }
-
         public void Log(LogLevel level, string data)
         {
-            _output.WriteLine($"[{level}] {data}");
+            _console.WriteLine($"[{level}] {data}");
         }
 
         public void Log(ILogMessage message)
@@ -200,11 +159,17 @@ public sealed class RestoreCommand
         }
 
         public void LogDebug(string data) => Log(LogLevel.Debug, data);
+
         public void LogVerbose(string data) => Log(LogLevel.Verbose, data);
+
         public void LogInformation(string data) => Log(LogLevel.Information, data);
+
         public void LogMinimal(string data) => Log(LogLevel.Minimal, data);
+
         public void LogWarning(string data) => Log(LogLevel.Warning, data);
+
         public void LogError(string data) => Log(LogLevel.Error, data);
+
         public void LogInformationSummary(string data) => Log(LogLevel.Information, data);
     }
 }

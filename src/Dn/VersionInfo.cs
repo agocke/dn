@@ -1,4 +1,3 @@
-
 namespace Dn;
 
 public static class VersionInfo

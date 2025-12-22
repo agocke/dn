@@ -1,33 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Dn;
+using Serde.CmdLine;
+using Spectre.Console;
 
-// Check if we have a command
-if (args.Length > 0)
+var console = AnsiConsole.Console;
+
+if (!CmdLine.TryParse<DnArgs>(args, console, out var dnArgs))
 {
-    var command = args[0].ToLowerInvariant();
-
-    int exitCode = command switch
-    {
-        "build" => BuildCommand.Run(args),
-        "restore" => RestoreCommand.Run(args),
-        _ => BuildCommand.Run(args) // Default to build for backwards compatibility
-    };
-
-    Console.WriteLine(exitCode == 0 ? "done" : "failed");
-    return exitCode;
+    return 1;
 }
-else
+
+var env = new DnEnv(Environment.CurrentDirectory, console);
+
+return dnArgs.SubCommand switch
 {
-    // No arguments - show help
-    Console.WriteLine("dn - A mini .NET SDK");
-    Console.WriteLine();
-    Console.WriteLine("Commands:");
-    Console.WriteLine("  restore   Restore project dependencies");
-    Console.WriteLine("  build     Build a .NET project");
-    Console.WriteLine();
-    Console.WriteLine("Usage:");
-    Console.WriteLine("  dn restore [project-path]");
-    Console.WriteLine("  dn build [project-path]");
-    return 0;
-}
+    SubCommand.BuildArgs buildArgs => BuildCommand.Execute(env, buildArgs),
+    SubCommand.RestoreArgs restoreArgs => await RestoreCommand.ExecuteAsync(env, restoreArgs),
+};
