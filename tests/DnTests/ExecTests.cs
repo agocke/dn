@@ -1,6 +1,8 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Spectre.Console;
+using Spectre.Console.Testing;
 using Xunit;
 
 namespace Dn.Test;
@@ -15,7 +17,7 @@ public sealed class ExecTests : IDisposable
     public ExecTests(ITestOutputHelper outputHelper)
     {
         _outputHelper = outputHelper;
-        _env = new DnEnv(_tempDir.Path, new TestWriter(_outputHelper));
+        _env = new DnEnv(_tempDir.Path, new TestConsole());
     }
 
     void IDisposable.Dispose()
@@ -29,7 +31,7 @@ public sealed class ExecTests : IDisposable
         _outputHelper.WriteLine($"TempDir: {_tempDir.Path}");
         _tempDir.CopyFile(ResolveRelativePath("../test_baselines/test_projects/HelloWorldNet8/Program.cs"));
         _tempDir.CopyFile(ResolveRelativePath("../test_baselines/test_projects/HelloWorldNet8/HelloWorldNet8.csproj"));
-        int code = BuildCommand.Execute(_env, new BuildArguments());
+        int code = BuildCommand.Execute(_env, new SubCommand.BuildArgs());
         Assert.Equal(0, code);
         string outDll = Path.Combine(_tempDir.Path, "obj/Debug/net8.0/HelloWorldNet8.dll");
         Assert.True(File.Exists(outDll));

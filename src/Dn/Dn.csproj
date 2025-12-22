@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -7,8 +6,17 @@
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
-  <!-- Dependencies for Roslyn -->
   <ItemGroup>
+    <PackageReference Include="Serde" />
+    <PackageReference Include="Serde.CmdLine" />
+    <PackageReference Include="StaticCS">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Dependencies for Roslyn -->
     <Reference Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/Microsoft.Build.Tasks.CodeAnalysis.dll" />
     <Content Include="$(_RoslynRestoreDirectory)microsoft.net.compilers.toolset/$(_RoslynVersion)/tasks/netcore/bincore/**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -33,6 +41,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniBuild\MiniBuild.csproj" />
   </ItemGroup>
-
-
 </Project>

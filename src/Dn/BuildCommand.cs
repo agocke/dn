@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing.Text;
-using Internal.CommandLine;
-using MiniBuild;
+using System.Linq;
 using Microsoft.Build.Utilities;
 using Microsoft.CodeAnalysis.BuildTasks;
+using MiniBuild;
+using Spectre.Console;
 using StaticCs.Collections;
 
 namespace Dn;
@@ -18,62 +18,33 @@ public sealed class BuildCommand
         public record Success : Result
         {
             private Success() { }
+
             public static readonly Success Instance = new();
         }
+
         public record Failure : Result
         {
             private Failure() { }
+
             public static readonly Failure Instance = new();
         }
     }
 
-    public static int Run(string[] args)
-    {
-        BuildArguments? buildArgs = null;
-
-        var argSyntax = ArgumentSyntax.Parse(args, syntax =>
-        {
-            string? commandName = null;
-
-            var build = syntax.DefineCommand("build", ref commandName, "Install a new SDK");
-            if (build.IsActive)
-            {
-                string? projectPath = null;
-                string? artifactsPath = null;
-
-                syntax.DefineOption("artifacts-path", ref artifactsPath, "Path to artifacts output");
-                syntax.DefineParameter("project-path", ref projectPath!, "Path to project");
-
-                buildArgs = new BuildArguments
-                {
-                    ArtifactsPath = artifactsPath,
-                    ProjectPath = projectPath
-                };
-            }
-        });
-
-        if (buildArgs is null)
-        {
-            throw new InvalidOperationException("Expected command or exception");
-        }
-
-        var env = new DnEnv(Environment.CurrentDirectory, Console.Out);
-
-        return Execute(env, buildArgs);
-    }
-
     internal class CscWrap : Csc
     {
-        protected override string PathToManagedTool => Path.Combine(AppContext.BaseDirectory, "bincore/csc.dll");
+        protected override string PathToManagedTool =>
+            Path.Combine(AppContext.BaseDirectory, "bincore/csc.dll");
     }
 
-    public static int Execute(DnEnv env, BuildArguments settings)
+    public static int Execute(DnEnv env, SubCommand.BuildArgs settings)
     {
         // TODO: Implement full MSBuild property and Item parsing
         var projectPath = settings.ProjectPath;
         if (projectPath is null)
         {
-            projectPath = Directory.EnumerateFiles(env.WorkingDirectory, "*.csproj", SearchOption.TopDirectoryOnly).Single();
+            projectPath = Directory
+                .EnumerateFiles(env.WorkingDirectory, "*.csproj", SearchOption.TopDirectoryOnly)
+                .Single();
         }
 
         var parsedProject = ProjectParser.TryParse(projectPath);
@@ -88,18 +59,32 @@ public sealed class BuildCommand
         var objDir = Path.Combine(Path.GetDirectoryName(projectPath)!, "obj", "Debug", "net8.0");
         Directory.CreateDirectory(objDir);
 
-        var csFiles = GetCompileItemsOrDefault(resolvedProject, Path.GetDirectoryName(projectPath)!);
-        var cscTask = BuildCscArgs(csFiles, projectPath, objDir, projectName, settings.ArtifactsPath, env.Out);
+        var csFiles = GetCompileItemsOrDefault(
+            resolvedProject,
+            Path.GetDirectoryName(projectPath)!
+        );
+        var cscTask = BuildCscArgs(
+            csFiles,
+            projectPath,
+            objDir,
+            projectName,
+            settings.ArtifactsPath,
+            env.Out
+        );
         _ = cscTask.Execute();
 
         var runtimeConfigPath = Path.Combine(objDir, $"{projectName}.runtimeconfig.json");
-        GenerateRuntimeConfigurationFiles.Run(VersionInfo.Net8Tfm, VersionInfo.RuntimeConfigNet8Version, runtimeConfigPath);
+        var runtimeConfig = RuntimeConfigJson.Create(VersionInfo.Net8Tfm, VersionInfo.RuntimeConfigNet8Version);
+        runtimeConfig.WriteToFile(runtimeConfigPath);
 
-        env.Out.WriteLine(cscTask.Utf8Output);
+        env.Out.WriteLine(cscTask.Utf8Output.ToString());
         return 0;
     }
 
-    private static EqArray<string> GetCompileItemsOrDefault(ResolvedProject resolved, string projectFolder)
+    private static EqArray<string> GetCompileItemsOrDefault(
+        ResolvedProject resolved,
+        string projectFolder
+    )
     {
         if (resolved.Items.TryGetValue("Compile", out var compileItems) && compileItems.Any())
         {
@@ -116,15 +101,25 @@ public sealed class BuildCommand
         string objDir,
         string projectName,
         string? artifactsPath,
-        TextWriter output)
+        IAnsiConsole output
+    )
     {
         // If there are no Compile items, assume we want to glob all *.cs files
         var projectFolder = Path.GetFullPath(Path.GetDirectoryName(projectPath)!);
         output.WriteLine(string.Join(Environment.NewLine, csFiles));
 
         // Add all ref assemblies from the Microsoft.NETCore.App.Ref package
-        var refPackDir = Path.Combine(AppContext.BaseDirectory, "microsoft.netcore.app.ref", "ref", "net8.0");
-        var refAssemblies = Directory.EnumerateFiles(refPackDir, "*.dll", SearchOption.TopDirectoryOnly);
+        var refPackDir = Path.Combine(
+            AppContext.BaseDirectory,
+            "microsoft.netcore.app.ref",
+            "ref",
+            "net8.0"
+        );
+        var refAssemblies = Directory.EnumerateFiles(
+            refPackDir,
+            "*.dll",
+            SearchOption.TopDirectoryOnly
+        );
 
         var cscTask = new CscWrap();
         if (artifactsPath is not null)
@@ -138,7 +133,7 @@ public sealed class BuildCommand
         }
         cscTask.Sources = csFiles.Select(p => new TaskItem(p)).ToArray();
         cscTask.UseSharedCompilation = true;
-        cscTask.BuildEngine = new MockEngine(output);
+        cscTask.BuildEngine = new MockEngine(new ConsoleWriter(output));
         cscTask.References = refAssemblies.Select(p => new TaskItem(p)).ToArray();
 
         return cscTask;

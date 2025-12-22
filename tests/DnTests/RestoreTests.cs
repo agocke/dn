@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Spectre.Console.Testing;
 using Xunit;
 
 namespace Dn.Test;
@@ -19,7 +20,7 @@ public sealed class RestoreTests : IDisposable
     public RestoreTests(ITestOutputHelper outputHelper)
     {
         _outputHelper = outputHelper;
-        _env = new DnEnv(_tempDir.Path, new TestWriter(_outputHelper));
+        _env = new DnEnv(_tempDir.Path, new TestConsole());
         Environment.CurrentDirectory = _tempDir.Path;
     }
 
@@ -71,11 +72,9 @@ public sealed class RestoreTests : IDisposable
         File.WriteAllText(Path.Combine(_tempDir.Path, "Program.cs"), programContent);
 
         // Run restore
-        var restoreArgs = new RestoreCommand.RestoreArguments
+        var restoreArgs = new SubCommand.RestoreArgs
         {
             ProjectPath = Path.Combine(_tempDir.Path, "TestProject.csproj"),
-            Force = false,
-            NoCache = false
         };
 
         int exitCode = await RestoreCommand.ExecuteAsync(_env, restoreArgs);
@@ -138,11 +137,9 @@ public sealed class RestoreTests : IDisposable
         File.WriteAllText(Path.Combine(_tempDir.Path, "Program.cs"), programContent);
 
         // Run restore
-        var restoreArgs = new RestoreCommand.RestoreArguments
+        var restoreArgs = new SubCommand.RestoreArgs
         {
             ProjectPath = Path.Combine(_tempDir.Path, "TestProject.csproj"),
-            Force = false,
-            NoCache = false
         };
 
         int exitCode = await RestoreCommand.ExecuteAsync(_env, restoreArgs);
@@ -188,11 +185,9 @@ public sealed class RestoreTests : IDisposable
 
         // Run restore
         var projectFile = Directory.GetFiles(_tempDir.Path, "*.csproj").First();
-        var restoreArgs = new RestoreCommand.RestoreArguments
+        var restoreArgs = new SubCommand.RestoreArgs
         {
             ProjectPath = projectFile,
-            Force = false,
-            NoCache = false
         };
 
         int exitCode = await RestoreCommand.ExecuteAsync(_env, restoreArgs);
@@ -258,11 +253,9 @@ public sealed class RestoreTests : IDisposable
         File.WriteAllText(Path.Combine(_tempDir.Path, "TestProject.csproj"), projectContent);
         File.WriteAllText(Path.Combine(_tempDir.Path, "Program.cs"), programContent);
 
-        var restoreArgs = new RestoreCommand.RestoreArguments
+        var restoreArgs = new SubCommand.RestoreArgs
         {
             ProjectPath = Path.Combine(_tempDir.Path, "TestProject.csproj"),
-            Force = false,
-            NoCache = false
         };
 
         int exitCode = await RestoreCommand.ExecuteAsync(_env, restoreArgs);
@@ -298,11 +291,9 @@ public sealed class RestoreTests : IDisposable
         File.WriteAllText(Path.Combine(_tempDir.Path, "TestProject.csproj"), projectContent);
         File.WriteAllText(Path.Combine(_tempDir.Path, "Program.cs"), "System.Console.WriteLine(\"Hello\");");
 
-        var restoreArgs = new RestoreCommand.RestoreArguments
+        var restoreArgs = new SubCommand.RestoreArgs
         {
             ProjectPath = Path.Combine(_tempDir.Path, "TestProject.csproj"),
-            Force = false,
-            NoCache = false
         };
 
         int exitCode = await RestoreCommand.ExecuteAsync(_env, restoreArgs);
